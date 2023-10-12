@@ -8,6 +8,8 @@ import {
   IconButton,
   FormControl,
   InputLabel,
+  Stack,
+  Divider,
 } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import CloseIcon from "@mui/icons-material/Close";
@@ -15,7 +17,7 @@ import { useJsApiLoader, GoogleMap, MarkerF } from "@react-google-maps/api";
 import { properties } from "./properties";
 
 const center = { lat: -37.9373447811622, lng: 145.449895817713 };
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 function App() {
   const { isLoaded } = useJsApiLoader({
@@ -24,10 +26,10 @@ function App() {
 
   const [open, setOpen] = useState(false);
   const [selectedMarkerData, setSelectedMarkerData] = useState(null);
-  const [selectedCouncil, setSelectedCouncil] = useState(""); // Step 1
+  const [selectedCouncil, setSelectedCouncil] = useState("");
 
   const handleCouncilChange = (event) => {
-    setSelectedCouncil(event.target.value); // Step 2
+    setSelectedCouncil(event.target.value);
   };
 
   if (!isLoaded) {
@@ -43,16 +45,13 @@ function App() {
     setOpen(false);
   };
 
-  // Step 3: Filter properties based on selectedCouncil
   const filteredProperties = properties.filter(
     ({ council }) => !selectedCouncil || council === selectedCouncil
   );
 
   return (
     <>
-      <Box
-        sx={{ display: "flex", justifyContent: "flex-start", margin: "20px" }}
-      >
+      <Box sx={{ display: "flex", justifyContent: "space-between", margin: 1 }}>
         <FormControl fullWidth size="small">
           <InputLabel id="demo-simple-select-label">Council</InputLabel>
           <Select
@@ -64,7 +63,6 @@ function App() {
             size="small"
           >
             <MenuItem value="">All Councils</MenuItem>
-            {/* Create a list of unique councils from properties */}
             {[...new Set(properties.map((property) => property.council))].map(
               (council, index) => (
                 <MenuItem key={index} value={council}>
@@ -112,25 +110,36 @@ function App() {
             height: "90%",
             "& .MuiDrawer-paper": {
               width: drawerWidth,
-              marginTop: 10,
             },
           }}
         >
-          <Box>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 1 }}>
             <IconButton onClick={handleClickClose}>
               <CloseIcon />
             </IconButton>
           </Box>
+          <Divider></Divider>
           {selectedMarkerData && (
-            <Typography>
-              Property ID: {selectedMarkerData.property_id}
-              <br />
-              Council: {selectedMarkerData.council}
-              <br />
-              Address: {selectedMarkerData.full_address}
-              <br />
-              Postcode: {selectedMarkerData.postcode}
-            </Typography>
+            <Box sx={{ mr: 1, ml: 1, mt: 1 }}>
+              <Stack direction={"column"} spacing={1}>
+                <Stack direction={"row"} spacing={1}>
+                  <Typography>Property ID: {""}</Typography>
+                  <Typography>{selectedMarkerData.property_id}</Typography>
+                </Stack>
+                <Stack direction={"row"} spacing={1}>
+                  <Typography>Council: {""}</Typography>
+                  <Typography>{selectedMarkerData.council}</Typography>
+                </Stack>
+                <Stack direction={"row"} spacing={1}>
+                  <Typography>Address: {""}</Typography>
+                  <Typography>{selectedMarkerData.full_address}</Typography>
+                </Stack>
+                <Stack direction={"row"} spacing={1}>
+                  <Typography>Postcode: {""}</Typography>
+                  <Typography>{selectedMarkerData.postcode}</Typography>
+                </Stack>
+              </Stack>
+            </Box>
           )}
         </Drawer>
       </Box>
